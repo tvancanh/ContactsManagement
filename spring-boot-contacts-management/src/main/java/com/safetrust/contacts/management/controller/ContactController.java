@@ -11,6 +11,7 @@ import com.safetrust.contacts.management.ExceptionHandler.ResourceNotFoundExcept
 import com.safetrust.contacts.management.model.Contact;
 import com.safetrust.contacts.management.repository.ContactRepository;
 import com.safetrust.contacts.management.service.ContactService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +38,7 @@ public class ContactController {
     @Autowired
     ContactService contactService;
 
-    private boolean isEmpty(String str) {
-        return str == null || "".equals(str);
-    }
-
+    @ApiOperation(value = "Get all contacts")
     @GetMapping("/contact")
     public ResponseEntity<Map<String, Object>> getAllContactsPage(
             @RequestParam(required = false) String firstName,
@@ -51,26 +49,31 @@ public class ContactController {
         return contactService.getAllContacts(firstName, lastName, page, size);
     }
 
+    @ApiOperation(value = "Get contact by id")
     @GetMapping("/contact/{id}")
     public ResponseEntity<Contact> getContactById(@PathVariable("id") long id) {
         return contactService.getContactById(id);
     }
 
+    @ApiOperation(value = "Create new contact")
     @PostMapping("/contact")
     public ResponseEntity<Contact> createContact(@Valid @RequestBody Contact contact) {
         return contactService.createContact(contact);
     }
 
+    @ApiOperation(value = "Update contact by id")
     @PutMapping("/contact/{id}")
     public ResponseEntity<Contact> updateContact(@PathVariable("id") long id, @RequestBody Contact contact) {
         return contactService.updateContact(id, contact);
     }
 
+    @ApiOperation(value = "Delete a contact")
     @DeleteMapping("/contact/{id}")
     public ResponseEntity<HttpStatus> deleteContact(@PathVariable("id") long id) {
         return contactService.deleteContact(id);
     }
 
+    @ApiOperation(value = "Delete all contact")
     @DeleteMapping("/contacts")
     public ResponseEntity<HttpStatus> deleteAllContacts() {
         return contactService.deleteAllContacts();

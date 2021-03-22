@@ -5,45 +5,54 @@
  ******************************************************/
 package com.safetrust.contacts.management.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ * @author tvancanh
+ */
 @NoArgsConstructor
 @Data
 @Entity
 @Table(name = "contacts")
 public class Contact {
 
+    @ApiModelProperty(notes = "The database generated product ID")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @NotEmpty(message = "last name must not be empty")
+    @ApiModelProperty(notes = "The last name of contact")
+    @NotEmpty(message = "Last name must not be empty")
     @Column(name = "last_name")
     private String lastName;
 
-    @NotEmpty(message = "first name must not be empty")
+    @ApiModelProperty(notes = "The first name of contact")
+    @NotEmpty(message = "First name must not be empty")
     @Column(name = "first_name")
     private String firstName;
 
-    @NotEmpty(message = "email must not be empty")
+    @ApiModelProperty(notes = "The email address of contact")
+    @NotEmpty(message = "Email must not be empty")
     @Pattern(regexp = "^(.+)@(.+)$",
             message = "Invalid email address")
     @Column(name = "email_address")
     private String email;
 
-    @NotEmpty(message = "phone number must not be empty")
+    @ApiModelProperty(notes = "The phone number of contact")
+    @NotEmpty(message = "Phone number must not be empty")
     @Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}",
             message = "Must be formatted 1234567890 or 123-456-7890 or (123)456-7890 or (123)4567890")
     @Column(name = "phone")
     private String phone;
 
+    @ApiModelProperty(notes = "The postal address of contact")
     @NotEmpty(message = "postal address must not be empty")
     @Column(name = "postal_address")
     private String postalAddress;

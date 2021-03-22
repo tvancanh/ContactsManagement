@@ -14,13 +14,19 @@ repositories {
 }
 
 dependencies {
+    //Spring
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.6.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.2.6.RELEASE'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.2.6.RELEASE'
+    //Swagger
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
+    //Mysql
     runtimeOnly 'mysql:mysql-connector-java:8.0.19'
-    // https://projectlombok.org
+    //Lombok
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.2.6.RELEASE'
+
 }
 
 group = 'com.safetrust'
