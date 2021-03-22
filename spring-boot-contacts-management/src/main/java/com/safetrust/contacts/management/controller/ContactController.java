@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.safetrust.contacts.management.ExceptionHandler.ResourceNotFoundException;
 import com.safetrust.contacts.management.model.Contact;
 import com.safetrust.contacts.management.repository.ContactRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -51,7 +54,6 @@ public class ContactController {
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "3") int size){
 
-    try {
       List<Contact> contacts = new ArrayList<Contact>();
       Pageable pagingSort = PageRequest.of(page, size);
 
@@ -63,6 +65,10 @@ public class ContactController {
                 .findByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContaining(firstName, lastName, pagingSort);
       }
       contacts = contactPage.getContent();
+
+      if(contacts.isEmpty()){
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+      }
       Map<String, Object> response = new HashMap<>();
       response.put("name", contacts);
       response.put("currentPage", contactPage.getNumber());
@@ -70,68 +76,46 @@ public class ContactController {
       response.put("totalPages", contactPage.getTotalPages());
 
       return new ResponseEntity<>(response, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
 
   @GetMapping("/contacts/{id}")
   public ResponseEntity<Contact> getContactById(@PathVariable("id") long id) {
-    Optional<Contact> contactData = contactRepository.findById(id);
+    Contact contact = contactRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("id contact not found: " +id));
 
-    if (contactData.isPresent()) {
-      return new ResponseEntity<>(contactData.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+      return new ResponseEntity<>(contact, HttpStatus.OK);
+
   }
 
   @PostMapping("/contact")
-  public ResponseEntity<Contact> createTutorial(@RequestBody Contact contact) {
-    try {
+  public ResponseEntity createTutorial(@Valid @RequestBody Contact contact) {
       Contact _contact = contactRepository.save(new Contact(contact.getLastName(), contact.getFirstName(),
               contact.getEmail(), contact.getPhone(), contact.getPostalAddress()));
-      return new ResponseEntity<>(_contact, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+      return new ResponseEntity<>(_contact, HttpStatus.OK);
   }
 
   @PutMapping("/contact/{id}")
   public ResponseEntity<Contact> updateTutorial(@PathVariable("id") long id, @RequestBody Contact contact) {
-    Optional<Contact> contactData = contactRepository.findById(id);
-
-    if (contactData.isPresent()) {
-      Contact _contact = contactData.get();
+    Contact _contact = contactRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("id contact not found: " + id));
       _contact.setFirstName(contact.getFirstName());
       _contact.setLastName(contact.getLastName());
       _contact.setEmail(contact.getEmail());
       _contact.setPhone(contact.getPhone());
       _contact.setPostalAddress(contact.getPostalAddress());
       return new ResponseEntity<>(contactRepository.save(_contact), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
   }
 
   @DeleteMapping("/contact/{id}")
   public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") long id) {
-    try {
       contactRepository.deleteById(id);
+
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
 
   @DeleteMapping("/contacts")
   public ResponseEntity<HttpStatus> deleteAllContacts() {
-    try {
       contactRepository.deleteAll();
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
   }
 }
