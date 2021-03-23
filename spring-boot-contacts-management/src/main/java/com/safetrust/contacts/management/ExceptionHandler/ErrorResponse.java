@@ -17,6 +17,13 @@ import java.util.List;
 @NoArgsConstructor
 public class ErrorResponse
 {
+    private String message;
+    private List<String> details;
+    private int statusCode;
+    private String resMessage;
+    private Date timestamp;
+    private String description;
+
     public ErrorResponse(String message, int statusCode, String resMessage, Date timestamp, String description, List<String> details) {
         this.message = message;
         this.statusCode = statusCode;
@@ -25,10 +32,4 @@ public class ErrorResponse
         this.description = description;
         this.details = details;
     }
-    private String message;
-    private List<String> details;
-    private int statusCode;
-    private String resMessage;
-    private Date timestamp;
-    private String description;
 }

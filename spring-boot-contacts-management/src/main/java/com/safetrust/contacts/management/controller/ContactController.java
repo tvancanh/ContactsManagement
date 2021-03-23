@@ -60,7 +60,6 @@ public class ContactController {
     public ResponseEntity<Contact> createContact(@Valid @RequestBody Contact contact) {
         return contactService.createContact(contact);
     }
-
     @ApiOperation(value = "Update contact by id")
     @PutMapping("/contact/{id}")
     public ResponseEntity<Contact> updateContact(@PathVariable("id") long id, @RequestBody Contact contact) {
